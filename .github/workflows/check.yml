@@ -19,3 +19,5 @@ jobs:
         run: python3 scripts/build_styles.py --check
       - name: styles pass the MapLibre style spec
         run: npx --yes -p @maplibre/maplibre-gl-style-spec@26.4.4 gl-style-validate styles/*.json
+      - name: DEM protocol tests
+        run: npm test

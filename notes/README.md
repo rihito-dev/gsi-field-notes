@@ -14,7 +14,7 @@
 |---|---|---|
 | [land-and-sea.md](land-and-sea.md) | 観測済み・目視確認 | z4–z7 では海が WA に入っておらず、陸が AdmArea の面として来る。z8 から逆になる |
 | [place-label-codes.md](place-label-codes.md) | 観測済み | 居住地名の注記コードは縮尺帯ごとに系列が分かれている(13xx は z4–z7、14xx は z8–z10) |
-| [dem-png-decoding.md](dem-png-decoding.md) | 観測済み・対処は未実装 | 線形の custom encoding では、データなしが約 83,886 m、海面下が約 167,772 m と読まれる |
+| [dem-png-decoding.md](dem-png-decoding.md) | 観測済み・目視確認・対処を実装 | 線形の custom encoding では、データなしが約 83,886 m、海面下が約 167,772 m と読まれ、海岸や干拓地の縁に黒い線が出る。読み直すプロトコルで消える |
 | [loading-without-external-tiles.md](loading-without-external-tiles.md) | 未検証 | 自前のデータは `load` ではなく `style.load` で足すと、地理院に届かなくても表示される |
 
 観測はすべて、決めた地点の真上のタイルだけを見た**標本**です。全国・全タイルについて

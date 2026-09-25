@@ -15,7 +15,7 @@
 |---|---|---|
 | [海と陸の表し方](notes/land-and-sea.md) | 観測済み・目視確認 | z4–z7 では海が WA に入っておらず、陸が AdmArea の面として来る。z8 から逆になる |
 | [居住地名の注記コード](notes/place-label-codes.md) | 観測済み | 居住地名のコードは縮尺帯で系列が分かれる(13xx は z4–z7、14xx は z8–z10) |
-| [標高タイルの復号](notes/dem-png-decoding.md) | 観測済み・対処は未実装 | 線形の custom encoding では、データなしが約 83,886 m、海面下が約 167,772 m と読まれる |
+| [標高タイルの復号](notes/dem-png-decoding.md) | 観測済み・目視確認・対処を実装 | 線形の custom encoding では、データなしが約 83,886 m、海面下が約 167,772 m と読まれ、海岸や干拓地の縁に黒い線が出る。読み直すプロトコルで消える |
 | [外部タイルが届かないとき](notes/loading-without-external-tiles.md) | 未検証 | 自前のデータは `load` ではなく `style.load` で足す |
 
 観測は決めた地点の真上のタイルだけを見た標本です。状態の意味と限界は [notes/README.md](notes/README.md) にあります。
@@ -36,11 +36,26 @@
 </script>
 ```
 
+### 標高タイルを正しく読む(任意)
+
+スタイルは標高タイルを線形の式で読んでおり、海岸や海面下の土地の縁に黒い線が出ます
+([ノート](notes/dem-png-decoding.md))。[`src/gsi-dem-protocol.js`](src/gsi-dem-protocol.js) を足すと、
+画素ごとに地理院の仕様どおりに読み直します。
+
+```js
+import { createGsiDemProtocol, withFixedDem } from "./src/gsi-dem-protocol.js";
+addProtocol("gsidem", createGsiDemProtocol());
+const style = withFixedDem(await (await fetch("styles/dark.json")).json());
+new Map({ container: "map", style });
+```
+
+### デモ
+
 デモはリポジトリの直下でサーバを立てて開きます。
 
 ```sh
 python3 -m http.server 8765
-# http://localhost:8765/demo/ と http://localhost:8765/demo/?preset=light
+# http://localhost:8765/demo/  (?preset=light, ?dem=fixed で切り替え)
 ```
 
 ## プリセットと色
@@ -83,6 +98,9 @@ presets/        色の指定(プリセット)
 styles/         生成された MapLibre スタイル(コミットしてある)
 notes/          野帳。実際のタイルを見てわかったこと
 data/observations/  観測スクリプトの出力
+src/
+  gsi-dem-protocol.js     標高タイルを読み直すプロトコル(任意)
+tests/          src/ のテスト(npm test)
 scripts/
   build_styles.py         プリセットからスタイルを生成する
   observe_vector_tiles.py ベクトルタイルのレイヤと vt_code を数える
@@ -102,7 +120,7 @@ demo/           スタイルを表示するだけのページ
 
 - 観測は北海道の数地点での標本で、全国・全タイルについての主張ではありません
 - vt_code の意味は、地理院の仕様書とはまだ突き合わせていません。スタイルの判断は、観測と実際の表示にもとづいています
-- 標高タイルの復号の問題は、スタイル JSON だけでは直せません([ノート](notes/dem-png-decoding.md))
+- 標高タイルの読み直しは JavaScript のプロトコルで行うので、スタイル JSON だけを使う場合は直りません([ノート](notes/dem-png-decoding.md))
 
 ## Where it came from
 

@@ -26,23 +26,39 @@
         <option value="light">light</option>
       </select>
     </label>
+    <label>DEM
+      <select id="dem">
+        <option value="linear">linear(スタイルのまま)</option>
+        <option value="fixed">fixed(読み直し)</option>
+      </select>
+    </label>
     z <output id="zoom">-</output>
   </div>
   <div id="map"></div>
 
   <script type="module">
     import { Map, NavigationControl, addProtocol } from "https://cdn.jsdelivr.net/npm/maplibre-gl@6.11.2/dist/maplibre-gl.mjs";
+    import { SCHEME, createGsiDemProtocol, withFixedDem } from "../src/gsi-dem-protocol.js";
 
     const protocol = new pmtiles.Protocol();
     addProtocol("pmtiles", protocol.tile);
+    addProtocol(SCHEME, createGsiDemProtocol());
 
     const params = new URLSearchParams(location.search);
-    const select = document.getElementById("preset");
-    select.value = params.get("preset") === "light" ? "light" : "dark";
+    const presetSelect = document.getElementById("preset");
+    const demSelect = document.getElementById("dem");
+    presetSelect.value = params.get("preset") === "light" ? "light" : "dark";
+    demSelect.value = params.get("dem") === "fixed" ? "fixed" : "linear";
+
+    // DEM を読み直すときだけ、スタイルの標高ソースを差し替える。スタイル JSON 自体は変えない。
+    async function loadStyle() {
+      const style = await (await fetch(`../styles/${presetSelect.value}.json`)).json();
+      return demSelect.value === "fixed" ? withFixedDem(style) : style;
+    }
 
     const map = new Map({
       container: "map",
-      style: `../styles/${select.value}.json`,
+      style: await loadStyle(),
       center: [142.8, 43.4],
       zoom: 6,
       hash: true,
@@ -69,11 +85,13 @@
       });
     });
 
-    select.addEventListener("change", () => {
-      map.setStyle(`../styles/${select.value}.json`);
-      params.set("preset", select.value);
-      history.replaceState(null, "", `?${params}${location.hash}`);
-    });
+    for (const select of [presetSelect, demSelect]) {
+      select.addEventListener("change", async () => {
+        map.setStyle(await loadStyle());
+        params.set(select.id, select.value);
+        history.replaceState(null, "", `?${params}${location.hash}`);
+      });
+    }
   </script>
 </body>
 </html>
