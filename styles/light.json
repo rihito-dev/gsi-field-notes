@@ -1,0 +1,165 @@
+{
+  "version": 8,
+  "name": "gsi-field-notes/light",
+  "glyphs": "https://gsi-cyberjapan.github.io/optimal_bvmap/glyphs/{fontstack}/{range}.pbf",
+  "sources": {
+    "gsi": {
+      "type": "vector",
+      "minzoom": 4,
+      "maxzoom": 16,
+      "tiles": [
+        "pmtiles://https://cyberjapandata.gsi.go.jp/xyz/optimal_bvmap-v1/optimal_bvmap-v1.pmtiles/{z}/{x}/{y}"
+      ],
+      "attribution": "<a href=\"https://maps.gsi.go.jp/development/ichiran.html\" target=\"_blank\" rel=\"noopener\">地理院タイル</a>(最適化ベクトルタイル)"
+    },
+    "gsi-dem": {
+      "type": "raster-dem",
+      "tiles": [
+        "https://cyberjapandata.gsi.go.jp/xyz/dem_png/{z}/{x}/{y}.png"
+      ],
+      "tileSize": 256,
+      "minzoom": 1,
+      "maxzoom": 14,
+      "encoding": "custom",
+      "redFactor": 655.36,
+      "greenFactor": 2.56,
+      "blueFactor": 0.01,
+      "baseShift": 0,
+      "attribution": "<a href=\"https://maps.gsi.go.jp/development/ichiran.html\" target=\"_blank\" rel=\"noopener\">地理院タイル</a>(標高タイル)"
+    }
+  },
+  "layers": [
+    {
+      "id": "background",
+      "type": "background",
+      "paint": {
+        "background-color": [
+          "step",
+          [
+            "zoom"
+          ],
+          "#BFD6E6",
+          8,
+          "#F4F1EA"
+        ]
+      }
+    },
+    {
+      "id": "land-lowzoom",
+      "type": "fill",
+      "source": "gsi",
+      "source-layer": "AdmArea",
+      "maxzoom": 8,
+      "paint": {
+        "fill-color": "#F4F1EA"
+      }
+    },
+    {
+      "id": "hillshade",
+      "type": "hillshade",
+      "source": "gsi-dem",
+      "paint": {
+        "hillshade-shadow-color": "#8A8578",
+        "hillshade-highlight-color": "#FFFFFF",
+        "hillshade-accent-color": "#8A8578",
+        "hillshade-exaggeration": 0.3,
+        "hillshade-method": "igor"
+      }
+    },
+    {
+      "id": "water",
+      "type": "fill",
+      "source": "gsi",
+      "source-layer": "WA",
+      "paint": {
+        "fill-color": "#BFD6E6"
+      }
+    },
+    {
+      "id": "river",
+      "type": "line",
+      "source": "gsi",
+      "source-layer": "RvrCL",
+      "minzoom": 9,
+      "paint": {
+        "line-color": "rgba(110,150,185,0.6)",
+        "line-width": 1
+      }
+    },
+    {
+      "id": "admin-boundary",
+      "type": "line",
+      "source": "gsi",
+      "source-layer": "AdmBdry",
+      "paint": {
+        "line-color": "rgba(60,60,60,0.25)",
+        "line-width": 1
+      }
+    },
+    {
+      "id": "railway",
+      "type": "line",
+      "source": "gsi",
+      "source-layer": "RailCL",
+      "minzoom": 10,
+      "paint": {
+        "line-color": "rgba(60,60,60,0.35)",
+        "line-width": 1,
+        "line-dasharray": [
+          4,
+          3
+        ]
+      }
+    },
+    {
+      "id": "road",
+      "type": "line",
+      "source": "gsi",
+      "source-layer": "RdCL",
+      "minzoom": 10,
+      "paint": {
+        "line-color": "rgba(60,60,60,0.18)",
+        "line-width": 1
+      }
+    },
+    {
+      "id": "place-label",
+      "type": "symbol",
+      "source": "gsi",
+      "source-layer": "Anno",
+      "filter": [
+        "in",
+        [
+          "get",
+          "vt_code"
+        ],
+        [
+          "literal",
+          [
+            1301,
+            1302,
+            1303,
+            1401,
+            1402,
+            1403
+          ]
+        ]
+      ],
+      "layout": {
+        "text-field": [
+          "get",
+          "vt_text"
+        ],
+        "text-font": [
+          "NotoSansJP-Regular"
+        ],
+        "text-size": 15
+      },
+      "paint": {
+        "text-color": "rgba(30,30,30,0.9)",
+        "text-halo-color": "rgba(244,241,234,0.9)",
+        "text-halo-width": 2
+      }
+    }
+  ]
+}

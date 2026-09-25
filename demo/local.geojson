@@ -1,0 +1,10 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": { "name": "札幌駅(ローカルに置いたデータの例)" },
+      "geometry": { "type": "Point", "coordinates": [141.3508, 43.0687] }
+    }
+  ]
+}

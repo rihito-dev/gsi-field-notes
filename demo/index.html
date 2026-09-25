@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>gsi-field-notes demo</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@6.11.2/dist/maplibre-gl.css">
+  <script src="https://cdn.jsdelivr.net/npm/pmtiles@4.5.0/dist/pmtiles.js"></script>
+  <style>
+    html, body, #map { margin: 0; height: 100%; }
+    body { font: 14px/1.5 system-ui, sans-serif; }
+    .panel {
+      position: absolute; top: 12px; left: 12px; z-index: 1;
+      padding: 8px 12px; border-radius: 8px;
+      background: rgba(255,255,255,0.92); color: #111;
+    }
+    .panel label { margin-right: 8px; }
+    .panel output { font-variant-numeric: tabular-nums; }
+  </style>
+</head>
+<body>
+  <div class="panel">
+    <label>preset
+      <select id="preset">
+        <option value="dark">dark</option>
+        <option value="light">light</option>
+      </select>
+    </label>
+    z <output id="zoom">-</output>
+  </div>
+  <div id="map"></div>
+
+  <script type="module">
+    import { Map, NavigationControl, addProtocol } from "https://cdn.jsdelivr.net/npm/maplibre-gl@6.11.2/dist/maplibre-gl.mjs";
+
+    const protocol = new pmtiles.Protocol();
+    addProtocol("pmtiles", protocol.tile);
+
+    const params = new URLSearchParams(location.search);
+    const select = document.getElementById("preset");
+    select.value = params.get("preset") === "light" ? "light" : "dark";
+
+    const map = new Map({
+      container: "map",
+      style: `../styles/${select.value}.json`,
+      center: [142.8, 43.4],
+      zoom: 6,
+      hash: true,
+    });
+    map.addControl(new NavigationControl({}), "top-right");
+
+    const zoomOut = document.getElementById("zoom");
+    const showZoom = () => { zoomOut.value = map.getZoom().toFixed(1); };
+    map.on("zoom", showZoom);
+    showZoom();
+
+    // 自前のデータは "load" ではなく "style.load" で足す。"load" は style のソース(地理院の
+    // タイル)が揃うまで発火しないので、地理院に届かない環境では自前のデータまで出なくなる。
+    // style.load はスタイル差し替えのたびに再発火するので、二重追加をガードする。
+    map.on("style.load", async () => {
+      if (map.getSource("local")) return;
+      const res = await fetch("./local.geojson");
+      map.addSource("local", { type: "geojson", data: await res.json() });
+      map.addLayer({
+        id: "local-point",
+        type: "circle",
+        source: "local",
+        paint: { "circle-radius": 6, "circle-color": "#F2B134", "circle-stroke-width": 2, "circle-stroke-color": "#111" },
+      });
+    });
+
+    select.addEventListener("change", () => {
+      map.setStyle(`../styles/${select.value}.json`);
+      params.set("preset", select.value);
+      history.replaceState(null, "", `?${params}${location.hash}`);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+{
+  "name": "light",
+  "description": "色だけを差し替えた例。構造は dark と同じ。",
+  "colors": {
+    "land": "#F4F1EA",
+    "water": "#BFD6E6",
+    "river": "rgba(110,150,185,0.6)",
+    "boundary": "rgba(60,60,60,0.25)",
+    "railway": "rgba(60,60,60,0.35)",
+    "road": "rgba(60,60,60,0.18)",
+    "label": "rgba(30,30,30,0.9)",
+    "label_halo": "rgba(244,241,234,0.9)",
+    "hillshade_shadow": "#8A8578",
+    "hillshade_highlight": "#FFFFFF",
+    "hillshade_accent": "#8A8578"
+  },
+  "hillshade_exaggeration": 0.3
+}

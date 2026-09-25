@@ -1,0 +1,52 @@
+{
+  "checked_at": "2026-09-25T10:28:57+00:00",
+  "source": "https://cyberjapandata.gsi.go.jp/xyz/optimal_bvmap-v1/optimal_bvmap-v1.pmtiles",
+  "source_last_modified": "Thu, 17 Sep 2026 07:32:00 GMT",
+  "source_etag": "\"dfa81a9cba11aad28247d63a2d8361ec-2015\"",
+  "pmtiles_header": {
+    "min_zoom": 4,
+    "max_zoom": 16,
+    "tile_type": "MVT",
+    "tile_compression": "GZIP"
+  },
+  "points": [
+    {
+      "name": "sapporo",
+      "lon": 141.3544,
+      "lat": 43.0621
+    },
+    {
+      "name": "hakodate",
+      "lon": 140.7288,
+      "lat": 41.7687
+    },
+    {
+      "name": "asahikawa",
+      "lon": 142.365,
+      "lat": 43.7706
+    },
+    {
+      "name": "kushiro",
+      "lon": 144.3814,
+      "lat": 42.9849
+    },
+    {
+      "name": "wakkanai",
+      "lon": 141.673,
+      "lat": 45.4156
+    },
+    {
+      "name": "assabu",
+      "lon": 140.227,
+      "lat": 41.921
+    }
+  ],
+  "zooms": [
+    4,
+    14
+  ],
+  "tiles_observed": 52,
+  "tiles_missing": [],
+  "requests": 66,
+  "note": "Sample of tiles directly above fixed points; not a census."
+}

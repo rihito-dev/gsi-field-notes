@@ -1,0 +1,59 @@
+{
+  "checked_at": "2026-09-25T10:29:37+00:00",
+  "source": "https://cyberjapandata.gsi.go.jp/xyz/dem_png/{z}/{x}/{y}.png",
+  "linear_factors": {
+    "redFactor": 655.36,
+    "greenFactor": 2.56,
+    "blueFactor": 0.01,
+    "baseShift": 0
+  },
+  "points": [
+    {
+      "name": "sapporo",
+      "lon": 141.3544,
+      "lat": 43.0621
+    },
+    {
+      "name": "hakodate",
+      "lon": 140.7288,
+      "lat": 41.7687
+    },
+    {
+      "name": "asahikawa",
+      "lon": 142.365,
+      "lat": 43.7706
+    },
+    {
+      "name": "kushiro",
+      "lon": 144.3814,
+      "lat": 42.9849
+    },
+    {
+      "name": "wakkanai",
+      "lon": 141.673,
+      "lat": 45.4156
+    },
+    {
+      "name": "assabu",
+      "lon": 140.227,
+      "lat": 41.921
+    },
+    {
+      "name": "ogata_below_sea_level",
+      "lon": 140.023,
+      "lat": 40.004
+    },
+    {
+      "name": "uchiura_bay_offshore",
+      "lon": 140.6,
+      "lat": 42.3
+    }
+  ],
+  "zooms": [
+    8,
+    11,
+    14
+  ],
+  "requests": 24,
+  "note": "Sample of tiles directly above fixed points; not a census."
+}

@@ -1,0 +1,21 @@
+name: check
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  styles:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: styles/ is generated from presets/
+        run: python3 scripts/build_styles.py --check
+      - name: styles pass the MapLibre style spec
+        run: npx --yes -p @maplibre/maplibre-gl-style-spec@26.4.4 gl-style-validate styles/*.json
