@@ -1,0 +1,92 @@
+{
+  "checked_at": "2026-09-26T04:07:56+00:00",
+  "blocked_hosts": [
+    "cyberjapandata.gsi.go.jp",
+    "gsi-cyberjapan.github.io"
+  ],
+  "view": "10/43.07/141.35",
+  "results": [
+    {
+      "environment": "control",
+      "dem": "linear",
+      "waited_ms": 20000,
+      "events_ms": {
+        "style.load": 3125,
+        "local-layer-added": 3420,
+        "load": 6731,
+        "idle": 6751
+      },
+      "load_fired": true,
+      "is_style_loaded": true,
+      "local_features_rendered": 1,
+      "gsi_probe": "HTTP 200"
+    },
+    {
+      "environment": "control",
+      "dem": "fixed",
+      "waited_ms": 20000,
+      "events_ms": {
+        "style.load": 49,
+        "local-layer-added": 105,
+        "load": 1274,
+        "idle": 1274
+      },
+      "load_fired": true,
+      "is_style_loaded": true,
+      "local_features_rendered": 1,
+      "gsi_probe": "HTTP 200"
+    },
+    {
+      "environment": "dns_failure",
+      "dem": "linear",
+      "waited_ms": 20000,
+      "events_ms": {
+        "style.load": 2745,
+        "local-layer-added": 3141
+      },
+      "load_fired": false,
+      "is_style_loaded": true,
+      "local_features_rendered": 1,
+      "gsi_probe": "TypeError"
+    },
+    {
+      "environment": "dns_failure",
+      "dem": "fixed",
+      "waited_ms": 20000,
+      "events_ms": {
+        "style.load": 91,
+        "local-layer-added": 145
+      },
+      "load_fired": false,
+      "is_style_loaded": true,
+      "local_features_rendered": 1,
+      "gsi_probe": "TypeError"
+    },
+    {
+      "environment": "no_response",
+      "dem": "linear",
+      "waited_ms": 20000,
+      "events_ms": {
+        "style.load": 2956,
+        "local-layer-added": 3201
+      },
+      "load_fired": false,
+      "is_style_loaded": false,
+      "local_features_rendered": 1,
+      "gsi_probe": "TimeoutError"
+    },
+    {
+      "environment": "no_response",
+      "dem": "fixed",
+      "waited_ms": 20000,
+      "events_ms": {
+        "style.load": 50,
+        "local-layer-added": 96
+      },
+      "load_fired": false,
+      "is_style_loaded": false,
+      "local_features_rendered": 1,
+      "gsi_probe": "TimeoutError"
+    }
+  ]
+}

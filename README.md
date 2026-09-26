@@ -16,7 +16,7 @@
 | [海と陸の表し方](notes/land-and-sea.md) | 観測済み・目視確認 | z4–z7 では海が WA に入っておらず、陸が AdmArea の面として来る。z8 から逆になる |
 | [居住地名の注記コード](notes/place-label-codes.md) | 観測済み | 居住地名のコードは縮尺帯で系列が分かれる(13xx は z4–z7、14xx は z8–z10) |
 | [標高タイルの復号](notes/dem-png-decoding.md) | 観測済み・目視確認・対処を実装 | 線形の custom encoding では、データなしが約 83,886 m、海面下が約 167,772 m と読まれ、海岸や干拓地の縁に黒い線が出る。読み直すプロトコルで消える |
-| [外部タイルが届かないとき](notes/loading-without-external-tiles.md) | 未検証 | 自前のデータは `load` ではなく `style.load` で足す |
+| [外部タイルが届かないとき](notes/loading-without-external-tiles.md) | 観測済み | 地理院に届かないと `load` は来ない。自前のデータは `style.load` で足せば描かれる |
 
 観測は決めた地点の真上のタイルだけを見た標本です。状態の意味と限界は [notes/README.md](notes/README.md) にあります。
 
@@ -120,6 +120,8 @@ scripts/
   observe_vector_tiles.py ベクトルタイルのレイヤと vt_code を数える
   observe_dem_png.py      標高タイルの画素を2通りに復号して比べる
   capture_comparisons.mjs デモを headless Chrome で撮影し docs/images/ に書く
+  check_offline.mjs       地理院のホストを遮断してデモを開き、描画を確かめる
+  _cdp.mjs                上の2本が使う headless Chrome の操作(依存なし)
 demo/           スタイルを表示するだけのページ
 docs/images/    README とノートの比較画像
 ```
