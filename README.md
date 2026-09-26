@@ -20,6 +20,20 @@
 
 観測は決めた地点の真上のタイルだけを見た標本です。状態の意味と限界は [notes/README.md](notes/README.md) にあります。
 
+## Before / after: 標高タイルの読み方
+
+スタイルのまま(線形の custom encoding)だと、海面下の土地や海岸の縁に黒い線が出ます。
+[`src/gsi-dem-protocol.js`](src/gsi-dem-protocol.js) で読み直すと消えます。
+
+| linear(スタイルのまま) | fixed(読み直し) |
+|---|---|
+| ![八郎潟干拓地 z11、線形の読み方。干拓地の縁に黒いギザギザの線が出ている](docs/images/hachirogata-linear.png) | ![八郎潟干拓地 z11、読み直し版。縁の線は消えている](docs/images/hachirogata-fixed.png) |
+| ![函館 z12.5、線形の読み方。埠頭と海岸の縁に黒い線が出ている](docs/images/hakodate-linear.png) | ![函館 z12.5、読み直し版。縁の線は消えている](docs/images/hakodate-fixed.png) |
+
+上: 八郎潟干拓地(z11、海面下の土地)。下: 函館(z12.5、普通の海岸)。いずれも dark プリセット。
+画像は地理院タイル(最適化ベクトルタイル・標高タイル)を加工して作成し、
+[`scripts/capture_comparisons.mjs`](scripts/capture_comparisons.mjs) で撮り直せます。
+
 ## Quick start
 
 スタイルは [`styles/`](styles/) にある JSON をそのまま読み込めます。ベクトルタイルは PMTiles
@@ -105,7 +119,9 @@ scripts/
   build_styles.py         プリセットからスタイルを生成する
   observe_vector_tiles.py ベクトルタイルのレイヤと vt_code を数える
   observe_dem_png.py      標高タイルの画素を2通りに復号して比べる
+  capture_comparisons.mjs デモを headless Chrome で撮影し docs/images/ に書く
 demo/           スタイルを表示するだけのページ
+docs/images/    README とノートの比較画像
 ```
 
 ## 出典とライセンス

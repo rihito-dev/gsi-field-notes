@@ -1,6 +1,6 @@
 # 線形の custom encoding では、海と海面下の標高が壊れる
 
-- 状態: 観測済み(2026-09-25)・目視確認(2026-09-25)・対処を実装([`src/gsi-dem-protocol.js`](../src/gsi-dem-protocol.js))
+- 状態: 観測済み(2026-09-25)・目視確認(2026-09-25, 画像 2026-09-26)・対処を実装([`src/gsi-dem-protocol.js`](../src/gsi-dem-protocol.js))
 - データ: [`data/observations/dem_png.csv`](../data/observations/dem_png.csv)
 - 対象: 標高タイル `dem_png`
 
@@ -49,6 +49,14 @@ MapLibre の `raster-dem` の `"encoding": "custom"` は
 | 支笏湖 z11.5 `#11.5/42.76/141.33` | (表示は比べていない。このタイルには無効値が無いので値は同じになる) | 湖岸に段差は出ない |
 
 `demo/?dem=linear` と `demo/?dem=fixed` に上の `#…` を付けると、同じ視点を開ける。
+
+| linear(スタイルのまま) | fixed(読み直し) |
+|---|---|
+| ![八郎潟 linear](../docs/images/hachirogata-linear.png) | ![八郎潟 fixed](../docs/images/hachirogata-fixed.png) |
+| ![函館 linear](../docs/images/hakodate-linear.png) | ![函館 fixed](../docs/images/hakodate-fixed.png) |
+
+画像は [`scripts/capture_comparisons.mjs`](../scripts/capture_comparisons.mjs) で、地図の描画が
+終わるのを待ってから撮影している(2026-09-26)。地理院タイルを加工して作成。
 
 普通の海岸では細い線にとどまるが、海面下の土地があると目立つ。
 

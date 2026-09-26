@@ -64,6 +64,8 @@
       hash: true,
     });
     map.addControl(new NavigationControl({}), "top-right");
+    // コンソールと scripts/capture_comparisons.mjs(描画完了を待って撮影する)から触れるようにする
+    window.map = map;
 
     const zoomOut = document.getElementById("zoom");
     const showZoom = () => { zoomOut.value = map.getZoom().toFixed(1); };
