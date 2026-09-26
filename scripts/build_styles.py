@@ -28,7 +28,9 @@ REQUIRED_COLORS = [
 GSI_VECTOR = "pmtiles://https://cyberjapandata.gsi.go.jp/xyz/optimal_bvmap-v1/optimal_bvmap-v1.pmtiles/{z}/{x}/{y}"
 GSI_DEM = "https://cyberjapandata.gsi.go.jp/xyz/dem_png/{z}/{x}/{y}.png"
 GSI_GLYPHS = "https://gsi-cyberjapan.github.io/optimal_bvmap/glyphs/{fontstack}/{range}.pbf"
-ATTRIBUTION = '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank" rel="noopener">地理院タイル</a>'
+# 出典の表記は地理院の案内に合わせる(notes/spec-comparison.md)
+VECTOR_ATTRIBUTION = '<a href="https://github.com/gsi-cyberjapan/optimal_bvmap" target="_blank" rel="noopener">国土地理院最適化ベクトルタイル</a>'
+DEM_ATTRIBUTION = '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank" rel="noopener">地理院タイル</a>(標高タイル)'
 
 # 居住地名の注記コード。縮尺帯ごとに系列が分かれている(notes/place-label-codes.md)。
 PLACE_LABEL_CODES = [1301, 1302, 1303, 1401, 1402, 1403]
@@ -47,7 +49,7 @@ def build(preset: dict) -> dict:
                 "minzoom": 4,
                 "maxzoom": 16,
                 "tiles": [GSI_VECTOR],
-                "attribution": ATTRIBUTION + "(最適化ベクトルタイル)",
+                "attribution": VECTOR_ATTRIBUTION,
             },
             "gsi-dem": {
                 "type": "raster-dem",
@@ -61,7 +63,7 @@ def build(preset: dict) -> dict:
                 "greenFactor": 2.56,
                 "blueFactor": 0.01,
                 "baseShift": 0,
-                "attribution": ATTRIBUTION + "(標高タイル)",
+                "attribution": DEM_ATTRIBUTION,
             },
         },
         "layers": [

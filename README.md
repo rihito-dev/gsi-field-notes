@@ -13,8 +13,9 @@
 
 | ノート | 状態 | 要点 |
 |---|---|---|
-| [海と陸の表し方](notes/land-and-sea.md) | 観測済み・目視確認 | z4–z7 では海が WA に入っておらず、陸が AdmArea の面として来る。z8 から逆になる |
-| [居住地名の注記コード](notes/place-label-codes.md) | 観測済み | 居住地名のコードは縮尺帯で系列が分かれる(13xx は z4–z7、14xx は z8–z10) |
+| [仕様との照合](notes/spec-comparison.md) | 仕様と照合済み | 観測した vt_code 105件のうち103件は仕様のズーム範囲内。港・空港の2件だけ範囲外でも出た |
+| [海と陸の表し方](notes/land-and-sea.md) | 観測済み・目視確認・仕様と照合済み | z4–z7 では海が WA に入っておらず、陸が AdmArea の面として来る。z8 から逆になる |
+| [居住地名の注記コード](notes/place-label-codes.md) | 観測済み・仕様と照合済み | 居住地名のコードは縮尺帯で系列が分かれる(13xx は z4–z7、14xx は z8–z10) |
 | [標高タイルの復号](notes/dem-png-decoding.md) | 観測済み・目視確認・対処を実装 | 線形の custom encoding では、データなしが約 83,886 m、海面下が約 167,772 m と読まれ、海岸や干拓地の縁に黒い線が出る。読み直すプロトコルで消える |
 | [外部タイルが届かないとき](notes/loading-without-external-tiles.md) | 観測済み | 地理院に届かないと `load` は来ない。自前のデータは `style.load` で足せば描かれる |
 
@@ -98,6 +99,7 @@ python -m pip install -r requirements.txt
 cd scripts
 python observe_vector_tiles.py   # data/observations/vector_tiles.csv
 python observe_dem_png.py        # data/observations/dem_png.csv
+python compare_with_spec.py      # data/observations/spec_comparison.csv(地理院の仕様書と照合)
 ```
 
 地理院のサーバへは 1 秒以上の間隔を空けて順番に要求します(2026-09-25 の実行ではベクトルタイルで 66 件、標高タイルで 24 件)。
@@ -119,6 +121,7 @@ scripts/
   build_styles.py         プリセットからスタイルを生成する
   observe_vector_tiles.py ベクトルタイルのレイヤと vt_code を数える
   observe_dem_png.py      標高タイルの画素を2通りに復号して比べる
+  compare_with_spec.py    観測した vt_code を地理院の仕様書と突き合わせる
   capture_comparisons.mjs デモを headless Chrome で撮影し docs/images/ に書く
   check_offline.mjs       地理院のホストを遮断してデモを開き、描画を確かめる
   _cdp.mjs                上の2本が使う headless Chrome の操作(依存なし)
@@ -131,13 +134,15 @@ docs/images/    README とノートの比較画像
 - 地図の表示には、国土地理院の[地理院タイル](https://maps.gsi.go.jp/development/ichiran.html)
   (最適化ベクトルタイル・標高タイル)とフォントを使います。出典表示はスタイルの `attribution` に入れてあります。
   利用条件は[国土地理院コンテンツ利用規約](https://www.gsi.go.jp/kikakuchousei/kikakuchousei40182.html)を確認してください
-- 最適化ベクトルタイルの仕様は [gsi-cyberjapan/optimal_bvmap](https://github.com/gsi-cyberjapan/optimal_bvmap) にあります
+- 最適化ベクトルタイルの仕様は [gsi-cyberjapan/optimal_bvmap](https://github.com/gsi-cyberjapan/optimal_bvmap) にあります。
+  出典は「国土地理院最適化ベクトルタイル」と明示します(スタイルの `attribution` に入れてあります)
 - このリポジトリのコード・スタイル・ノートは [MIT](LICENSE) です。地理院のデータそのものには及びません
 
 ## Deliberate limits
 
 - 観測は北海道の数地点での標本で、全国・全タイルについての主張ではありません
-- vt_code の意味は、地理院の仕様書とはまだ突き合わせていません。スタイルの判断は、観測と実際の表示にもとづいています
+- 最適化ベクトルタイルは地理院の**試験公開**で、URL・データ構成・属性が変わる可能性があります。観測日と対象ファイルの版を必ず記録しています
+- vt_code の照合は、観測で出たコードについてだけ行っています([ノート](notes/spec-comparison.md))
 - 標高タイルの読み直しは JavaScript のプロトコルで行うので、スタイル JSON だけを使う場合は直りません([ノート](notes/dem-png-decoding.md))
 
 ## Where it came from

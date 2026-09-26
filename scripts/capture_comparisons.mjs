@@ -24,7 +24,8 @@ const MODES = ["linear", "fixed"];
 const WAIT_FOR_IDLE = `new Promise((resolve, reject) => {
   const deadline = setTimeout(() => reject(new Error("map did not become idle")), 90000);
   const check = () => {
-    if (!window.map) return setTimeout(check, 200);
+    // 地図ができるまでは、window.map は id="map" の要素を指している(名前付きアクセス)。
+    if (typeof window.map?.loaded !== "function") return setTimeout(check, 200);
     const done = () => { clearTimeout(deadline); setTimeout(resolve, 1500); };
     if (window.map.loaded() && window.map.areTilesLoaded()) done();
     else window.map.once("idle", done);

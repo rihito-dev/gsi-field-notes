@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-09-26T04:07:56+00:00",
+  "checked_at": "2026-09-26T04:19:38+00:00",
   "blocked_hosts": [
     "cyberjapandata.gsi.go.jp",
     "gsi-cyberjapan.github.io"
@@ -11,10 +11,10 @@
       "dem": "linear",
       "waited_ms": 20000,
       "events_ms": {
-        "style.load": 3125,
-        "local-layer-added": 3420,
-        "load": 6731,
-        "idle": 6751
+        "style.load": 3580,
+        "local-layer-added": 3873,
+        "load": 7108,
+        "idle": 7122
       },
       "load_fired": true,
       "is_style_loaded": true,
@@ -26,10 +26,10 @@
       "dem": "fixed",
       "waited_ms": 20000,
       "events_ms": {
-        "style.load": 49,
-        "local-layer-added": 105,
-        "load": 1274,
-        "idle": 1274
+        "style.load": 115,
+        "local-layer-added": 164,
+        "load": 1125,
+        "idle": 1125
       },
       "load_fired": true,
       "is_style_loaded": true,
@@ -41,8 +41,8 @@
       "dem": "linear",
       "waited_ms": 20000,
       "events_ms": {
-        "style.load": 2745,
-        "local-layer-added": 3141
+        "style.load": 3299,
+        "local-layer-added": 3544
       },
       "load_fired": false,
       "is_style_loaded": true,
@@ -54,8 +54,8 @@
       "dem": "fixed",
       "waited_ms": 20000,
       "events_ms": {
-        "style.load": 91,
-        "local-layer-added": 145
+        "style.load": 43,
+        "local-layer-added": 92
       },
       "load_fired": false,
       "is_style_loaded": true,
@@ -67,8 +67,8 @@
       "dem": "linear",
       "waited_ms": 20000,
       "events_ms": {
-        "style.load": 2956,
-        "local-layer-added": 3201
+        "style.load": 3326,
+        "local-layer-added": 3572
       },
       "load_fired": false,
       "is_style_loaded": false,
@@ -80,8 +80,8 @@
       "dem": "fixed",
       "waited_ms": 20000,
       "events_ms": {
-        "style.load": 50,
-        "local-layer-added": 96
+        "style.load": 42,
+        "local-layer-added": 91
       },
       "load_fired": false,
       "is_style_loaded": false,

@@ -3,3 +3,4 @@ pmtiles==3.8.1
 mapbox-vector-tile==2.2.0
 Pillow==12.3.0
 requests==2.34.2
+openpyxl==3.1.5

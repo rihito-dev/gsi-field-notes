@@ -10,7 +10,7 @@
       "tiles": [
         "pmtiles://https://cyberjapandata.gsi.go.jp/xyz/optimal_bvmap-v1/optimal_bvmap-v1.pmtiles/{z}/{x}/{y}"
       ],
-      "attribution": "<a href=\"https://maps.gsi.go.jp/development/ichiran.html\" target=\"_blank\" rel=\"noopener\">地理院タイル</a>(最適化ベクトルタイル)"
+      "attribution": "<a href=\"https://github.com/gsi-cyberjapan/optimal_bvmap\" target=\"_blank\" rel=\"noopener\">国土地理院最適化ベクトルタイル</a>"
     },
     "gsi-dem": {
       "type": "raster-dem",
