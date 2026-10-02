@@ -11,14 +11,15 @@
 | 未検証 | 別の場所で確認したことがあるが、このリポジトリではまだ確かめていない |
 | 仕様と照合済み | 地理院が公開している仕様書と突き合わせた |
 
-| ノート | 状態 | 要点 |
-|---|---|---|
-| [spec-comparison.md](spec-comparison.md) | 仕様と照合済み | 観測した vt_code 105件のうち103件は仕様のズーム範囲内。港・空港の2件だけ範囲外でも出た |
-| [land-and-sea.md](land-and-sea.md) | 観測済み・目視確認・仕様と照合済み | z4–z7 では海が WA に入っておらず、陸が AdmArea の面として来る。z8 から逆になる |
-| [place-label-codes.md](place-label-codes.md) | 観測済み・仕様と照合済み | 居住地名の注記コードは縮尺帯ごとに系列が分かれている(13xx は z4–z7、14xx は z8–z10) |
-| [dem-png-decoding.md](dem-png-decoding.md) | 観測済み・目視確認・対処を実装 | 線形の custom encoding では、データなしが約 83,886 m、海面下が約 167,772 m と読まれ、海岸や干拓地の縁に黒い線が出る。読み直すプロトコルで消える |
-| [loading-without-external-tiles.md](loading-without-external-tiles.md) | 観測済み | 地理院に届かないと `load` は来ない。自前のデータは `style.load` で足せば描かれる(遮断試験で確認) |
+- **[land-and-sea.md](land-and-sea.md)**(観測済み・目視確認・仕様と照合済み)
+  z4–z7 では海が WA に入っておらず、陸が AdmArea の面として来る。z8 から逆になる
+- **[place-label-codes.md](place-label-codes.md)**(観測済み・仕様と照合済み)
+  居住地名の注記コードは縮尺帯ごとに系列が分かれている(13xx は z4–z7、14xx は z8–z10)
+- **[dem-png-decoding.md](dem-png-decoding.md)**(観測済み・目視確認・対処を実装)
+  線形の custom encoding では、データなしが約 83,886 m、海面下が約 167,772 m と読まれ、海岸や干拓地の縁に黒い線が出る。読み直すプロトコルで消える
+- **[loading-without-external-tiles.md](loading-without-external-tiles.md)**(観測済み)
+  地理院に届かないと `load` は来ない。自前のデータは `style.load` で足せば描かれる(遮断試験で確認)
+- **[spec-comparison.md](spec-comparison.md)**(仕様と照合済み)
+  観測した vt_code 105件のうち103件は仕様のズーム範囲内。港・空港の2件だけ範囲外でも出た
 
-観測はすべて、決めた地点の真上のタイルだけを見た**標本**です。全国・全タイルについて
-言えることではありません。タイルは更新されるので、各ノートの観測日と、
-`data/observations/*.meta.json` にある対象ファイルの版もあわせて見てください。
+観測はすべて、決めた地点の真上のタイルだけを見た**標本**です。全国・全タイルについて言えることではありません。タイルは更新されるので、各ノートの観測日と、`data/observations/*.meta.json` にある対象ファイルの版もあわせて見てください。

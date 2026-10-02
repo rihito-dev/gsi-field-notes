@@ -28,8 +28,8 @@
     </label>
     <label>DEM
       <select id="dem">
-        <option value="linear">linear(スタイルのまま)</option>
-        <option value="fixed">fixed(読み直し)</option>
+        <option value="fixed">fixed(推奨: 正しく復号)</option>
+        <option value="linear">linear(比較用: 誤読を再現)</option>
       </select>
     </label>
     z <output id="zoom">-</output>
@@ -48,13 +48,19 @@
     const presetSelect = document.getElementById("preset");
     const demSelect = document.getElementById("dem");
     presetSelect.value = params.get("preset") === "light" ? "light" : "dark";
-    demSelect.value = params.get("dem") === "fixed" ? "fixed" : "linear";
+    demSelect.value = params.get("dem") === "linear" ? "linear" : "fixed";
 
     // DEM を読み直すときだけ、スタイルの標高ソースを差し替える。スタイル JSON 自体は変えない。
     async function loadStyle() {
-      const style = await (await fetch(`../styles/${presetSelect.value}.json`)).json();
+      const response = await fetch(`../styles/${presetSelect.value}.json`);
+      if (!response.ok) throw new Error(`style: HTTP ${response.status}`);
+      const style = await response.json();
       return demSelect.value === "fixed" ? withFixedDem(style) : style;
     }
+
+    const localResponse = await fetch("./local.geojson");
+    if (!localResponse.ok) throw new Error(`local.geojson: HTTP ${localResponse.status}`);
+    const localData = await localResponse.json();
 
     const map = new Map({
       container: "map",
@@ -64,6 +70,7 @@
       hash: true,
     });
     map.addControl(new NavigationControl({}), "top-right");
+    map.on("error", (event) => console.error(event.error?.message ?? String(event.error)));
     // コンソールと scripts/capture_comparisons.mjs(描画完了を待って撮影する)から触れるようにする
     window.map = map;
 
@@ -75,10 +82,9 @@
     // 自前のデータは "load" ではなく "style.load" で足す。"load" は style のソース(地理院の
     // タイル)が揃うまで発火しないので、地理院に届かない環境では自前のデータまで出なくなる。
     // style.load はスタイル差し替えのたびに再発火するので、二重追加をガードする。
-    map.on("style.load", async () => {
+    map.on("style.load", () => {
       if (map.getSource("local")) return;
-      const res = await fetch("./local.geojson");
-      map.addSource("local", { type: "geojson", data: await res.json() });
+      map.addSource("local", { type: "geojson", data: localData });
       map.addLayer({
         id: "local-point",
         type: "circle",
@@ -87,9 +93,13 @@
       });
     });
 
+    let styleRequest = 0;
     for (const select of [presetSelect, demSelect]) {
       select.addEventListener("change", async () => {
-        map.setStyle(await loadStyle());
+        const request = ++styleRequest;
+        const style = await loadStyle();
+        if (request !== styleRequest) return;
+        map.setStyle(style);
         params.set(select.id, select.value);
         history.replaceState(null, "", `?${params}${location.hash}`);
       });

@@ -3,3 +3,9 @@ __pycache__/
 *.pyc
 .DS_Store
 node_modules/
+work/
+.env
+.env.*
+!.env.example
+*.pem
+*.key
