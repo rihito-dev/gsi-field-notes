@@ -24,6 +24,20 @@ node scripts/check_offline.mjs
 
 この2本は既存の画像と `data/observations/offline.json` を更新します。別の作業コピーで実行し、画像・記録・ノートの差分を確認してください。撮影には CDN と地理院タイルへの接続が必要です。遮断試験も CDN とローカルサーバには接続します。
 
+## GitHub Pages
+
+Pages用の出力を、プロジェクト名のサブパスを含めて確認できます。出力先には空のディレクトリを指定してください。
+
+```sh
+python3 scripts/build_pages.py --out work/pages-preview/gsi-field-notes
+python3 -m http.server 8765 --bind 127.0.0.1 --directory work/pages-preview
+# http://127.0.0.1:8765/gsi-field-notes/
+```
+
+ルートから `demo/` への移動、クエリと地図位置の保持、dark / light・fixed / linear、ローカルの点、出典表示を確認します。
+
+[GitHub公式のPagesワークフロー](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages)に従い、リポジトリ設定のPagesのSourceをGitHub Actionsにします。`check.yml` は全ブランチとPRで検証と静的出力の作成を行い、成功した `main` のpush・手動実行だけを `github-pages` 環境へ配信します。配信権限はデプロイジョブに限定しています。
+
 ## 観測の更新
 
 README の手順で `--out work/observations/<run-name>` に書き、既存の観測を上書きせず比較します。地点・ズーム・日時・入力の版とハッシュ・欠測を確認し、更新するときは CSV とメタデータ、ノートを同じ変更に含めます。全国や未観測の縮尺へ結果を広げないでください。

@@ -61,7 +61,12 @@
 
 ### デモ
 
-デモはリポジトリの直下でサーバを立てて開きます。
+[公開デモを開く](https://rihito-dev.github.io/gsi-field-notes/)。インストールせずに配色と標高の読み方を切り替えられます。
+
+- [八郎潟干拓地](https://rihito-dev.github.io/gsi-field-notes/demo/?dem=fixed#11/39.99/140.0)
+- [函館の海岸](https://rihito-dev.github.io/gsi-field-notes/demo/?dem=fixed#12.5/41.76/140.72)
+
+手元で試す場合は、リポジトリの直下でサーバを立てて開きます。
 
 ```sh
 python3 -m http.server 8765 --bind 127.0.0.1
@@ -69,6 +74,8 @@ python3 -m http.server 8765 --bind 127.0.0.1
 ```
 
 初期表示は `fixed` です。`?preset=light` で配色、`?dem=linear` で誤読を再現する比較モードに切り替えられます。デモは CDN と地理院のサーバに接続します。外部タイルの遮断試験でも CDN とローカルサーバは必要です。
+
+GitHub Pagesにはデモ・生成済みスタイル・復号プロトコル・ライセンスだけを配信します。CIの検証に成功した `main` を自動で公開し、観測記録はGitHubリポジトリで読めます。
 
 ## プリセットと色
 
