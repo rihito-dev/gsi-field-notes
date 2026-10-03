@@ -6,6 +6,8 @@
 
 ## 前提
 
+復号の出典: 国土地理院 [標高タイルの詳細仕様](https://maps.gsi.go.jp/development/demtile.html)。
+
 地理院の標高タイル(PNG)は、画素の RGB を次のように読む。
 
 ```text
@@ -15,10 +17,7 @@ x =  2^23 → 無効値(データなし)       RGB = (128, 0, 0)
 x >  2^23 → 標高 = 0.01 (x − 2^24) [m]  海面より低い土地
 ```
 
-MapLibre の `raster-dem` の `"encoding": "custom"` は
-`R × redFactor + G × greenFactor + B × blueFactor − baseShift` という**線形の式**しか書けない。
-このリポジトリのスタイルは `655.36 / 2.56 / 0.01 / 0` を使っており、`x < 2^23` の範囲では
-地理院の式と一致するが、無効値と負の標高は表せない。
+MapLibre の `raster-dem` の `"encoding": "custom"` は`R × redFactor + G × greenFactor + B × blueFactor − baseShift` という**線形の式**しか書けない。このリポジトリのスタイルは `655.36 / 2.56 / 0.01 / 0` を使っており、`x < 2^23` の範囲では地理院の式と一致するが、無効値と負の標高は表せない。
 
 ## 観測したこと
 
@@ -37,8 +36,7 @@ MapLibre の `raster-dem` の `"encoding": "custom"` は
 
 ## 見た目への影響
 
-陰影起伏は隣り合う画素の差から計算するので、海岸は「陸 → 83 km の崖」、干拓地は
-「地面 → 167 km の台地」として扱われる。海は `WA` の塗りで隠れるが、境目の陸側の陰影は残る。
+陰影起伏は隣り合う画素の差から計算するので、海岸は「陸 → 83 km の崖」、干拓地は「地面 → 167 km の台地」として扱われる。海は `WA` の塗りで隠れるが、境目の陸側の陰影は残る。
 
 デモで、同じ視点を線形(スタイルのまま)と読み直し版で並べて見た(dark プリセット)。
 
@@ -55,31 +53,28 @@ MapLibre の `raster-dem` の `"encoding": "custom"` は
 | ![八郎潟 linear](../docs/images/hachirogata-linear.png) | ![八郎潟 fixed](../docs/images/hachirogata-fixed.png) |
 | ![函館 linear](../docs/images/hakodate-linear.png) | ![函館 fixed](../docs/images/hakodate-fixed.png) |
 
-画像は [`scripts/capture_comparisons.mjs`](../scripts/capture_comparisons.mjs) で、地図の描画が
-終わるのを待ってから撮影している(2026-09-26)。地理院タイルを加工して作成。
+画像は [`scripts/capture_comparisons.mjs`](../scripts/capture_comparisons.mjs) で、地図の描画が終わるのを待ってから撮影している(2026-09-26)。国土地理院最適化ベクトルタイル・地理院タイル(標高タイル(基盤地図情報数値標高モデル))を加工して作成。
 
 普通の海岸では細い線にとどまるが、海面下の土地があると目立つ。
 
 ## 対処
 
-[`src/gsi-dem-protocol.js`](../src/gsi-dem-protocol.js) で、MapLibre の `addProtocol` を使って
-dem_png を取得し、画素ごとに地理院の仕様どおりに読み直して terrarium 形式に並べ替えて返す。
+[`src/gsi-dem-protocol.js`](../src/gsi-dem-protocol.js) で、MapLibre の `addProtocol` を使ってdem_png を取得し、画素ごとに地理院の仕様どおりに読み直して terrarium 形式に並べ替えて返す。
 
 - 無効値は 0 m にする(`createGsiDemProtocol({ nodataHeight })` で変えられる)
 - 海面下の値は、そのまま負の標高として書く
 - 陸地を含まない沖合のタイル(地理院側で 404)は、全画素 0 m の平らなタイルを返す
 - 画像の読み込みで色空間の変換や乗算済みアルファが入ると画素値が変わるので、どちらも切っている
 
-スタイル JSON は線形のまま置いてあり、単体で使える。直したい人だけが
-`withFixedDem(style)` で標高ソースを差し替える。
+スタイル JSON は線形の誤読を再現する比較用として残している。通常は `withFixedDem(style)` で標高ソースを差し替える。デモの初期表示と README の Quick start はこの読み直しを使う。
+
+HTTP 404 は海上に限らず欠測でも起き得るため、0 m の補完は陰影表示上の選択であり、標高を観測したことにはならない。
 
 ## 確かめたこと
 
 - 変換の計算は [`tests/gsi-dem-protocol.test.mjs`](../tests/gsi-dem-protocol.test.mjs) で確かめている
-- ブラウザでプロトコルを通したタイルを復号し直し、Python の観測と一致することを確かめた。
-  八郎潟 z14 は −4.9〜−2.84 m、函館 z11 の最大値は 331.28 m、沖合 z11(404)は全画素 0 m
-- 支笏湖のタイル(z11, z14)には無効値が無く、湖面にも標高が入っていた(z14 の湖の中央で 248 m)。
-  無効値を 0 m にしても、少なくともこの湖では段差は生まれない
+- ブラウザでプロトコルを通したタイルを復号し直し、Python の観測と一致することを確かめた。八郎潟 z14 は −4.9〜−2.84 m、函館 z11 の最大値は 331.28 m、沖合 z11(404)は全画素 0 m
+- 支笏湖のタイル(z11, z14)には無効値が無く、湖面にも標高が入っていた(z14 の湖の中央で 248 m)。無効値を 0 m にしても、少なくともこの湖では段差は生まれない
 
 ## まだ見ていないこと
 

@@ -18,6 +18,7 @@ from __future__ import annotations
 import argparse
 import csv
 import io
+import hashlib
 import json
 from pathlib import Path
 
@@ -69,11 +70,21 @@ def main() -> None:
 
     http = PoliteSession()
     rows = []
+    inputs = []
     for point in HOKKAIDO_POINTS + EXTRA_POINTS:
         for z in zooms:
             x, y = lonlat_to_tile(point.lon, point.lat, z)
             res = http.get(DEM_PNG_URL.format(z=z, x=x, y=y))
             row = {"point": point.name, "zoom": z, "x": x, "y": y, "http_status": res.status_code}
+            inputs.append({
+                "point": point.name, "zoom": z, "x": x, "y": y,
+                "http_status": res.status_code,
+                "last_modified": res.headers.get("Last-Modified"),
+                "etag": res.headers.get("ETag"),
+                "sha256": hashlib.sha256(res.content).hexdigest() if res.status_code == 200 else None,
+            })
+            if res.status_code != 404:
+                res.raise_for_status()
             if res.status_code == 200:
                 row.update(classify(Image.open(io.BytesIO(res.content))))
             rows.append(row)
@@ -89,6 +100,7 @@ def main() -> None:
     meta = {
         "checked_at": utc_now(),
         "source": DEM_PNG_URL,
+        "inputs": inputs,
         "linear_factors": {"redFactor": FACTORS[0], "greenFactor": FACTORS[1], "blueFactor": FACTORS[2], "baseShift": 0},
         "points": [p.__dict__ for p in HOKKAIDO_POINTS + EXTRA_POINTS],
         "zooms": zooms,

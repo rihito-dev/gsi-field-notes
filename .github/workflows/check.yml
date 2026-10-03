@@ -4,6 +4,9 @@ on:
   push:
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   styles:
     runs-on: ubuntu-latest
@@ -19,5 +22,7 @@ jobs:
         run: python3 scripts/build_styles.py --check
       - name: styles pass the MapLibre style spec
         run: npx --yes -p @maplibre/maplibre-gl-style-spec@26.4.4 gl-style-validate styles/*.json
+      - name: repository links and publication hygiene
+        run: python3 scripts/check_repository.py
       - name: DEM protocol tests
         run: npm test

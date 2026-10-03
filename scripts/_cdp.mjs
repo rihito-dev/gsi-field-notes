@@ -84,7 +84,10 @@ export async function open(send, url) {
   await sleep(1000);
 }
 
-export async function screenshot(send) {
-  const { data } = await send("Page.captureScreenshot", { format: "png" });
+/** clip({ x, y, width, height }, CSS ピクセル)を渡すと、その範囲だけを撮る。 */
+export async function screenshot(send, clip) {
+  const params = { format: "png" };
+  if (clip) params.clip = { ...clip, scale: 1 };
+  const { data } = await send("Page.captureScreenshot", params);
   return Buffer.from(data, "base64");
 }

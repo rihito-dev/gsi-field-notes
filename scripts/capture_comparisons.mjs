@@ -13,10 +13,11 @@ const ROOT = resolve(import.meta.dirname, "..");
 const OUT = join(ROOT, "docs", "images");
 const BASE = process.env.DEMO_URL ?? "http://localhost:8765/demo/";
 
-// 視点は notes/dem-png-decoding.md の表と同じ。
+// 視点は notes/dem-png-decoding.md の表と同じ。README では画像が小さく表示されるので、
+// 黒い線が出る範囲(800×600 の画面のうち clip の部分)だけを切り出す。
 const SHOTS = [
-  { name: "hachirogata", hash: "11/39.99/140.0" },
-  { name: "hakodate", hash: "12.5/41.76/140.72" },
+  { name: "hachirogata", hash: "11/39.99/140.0", clip: { x: 150, y: 120, width: 480, height: 360 } },
+  { name: "hakodate", hash: "12.5/41.76/140.72", clip: { x: 150, y: 60, width: 400, height: 300 } },
 ];
 const MODES = ["linear", "fixed"];
 
@@ -40,7 +41,7 @@ await withChrome(async ({ send, evaluate }) => {
       await open(send, `${BASE}?dem=${dem}&shot=${shot.name}#${shot.hash}`);
       await evaluate(WAIT_FOR_IDLE);
       const file = join(OUT, `${shot.name}-${dem}.png`);
-      await writeFile(file, await screenshot(send));
+      await writeFile(file, await screenshot(send, shot.clip));
       console.log(`wrote ${file.slice(ROOT.length + 1)}`);
     }
   }

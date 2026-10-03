@@ -13,6 +13,7 @@ from __future__ import annotations
 import argparse
 import csv
 import io
+import hashlib
 import json
 from collections import defaultdict
 from pathlib import Path
@@ -121,7 +122,10 @@ def main() -> None:
         "checked_at": utc_now(),
         "spec": SPEC_URL,
         "spec_last_modified": res.headers.get("Last-Modified"),
-        "observations": str(args.observations.relative_to(ROOT)),
+        "observations": args.observations.name,
+        "observations_sha256": hashlib.sha256(args.observations.read_bytes()).hexdigest(),
+        "spec_sha256": hashlib.sha256(res.content).hexdigest(),
+        "spec_etag": res.headers.get("ETag"),
         "layers": ["Anno", *sorted(AREA_LAYERS)],
         "counts": dict(counts),
         "note": "Observed zooms come from a sample of tiles; a code not observed at a zoom may still exist there.",
