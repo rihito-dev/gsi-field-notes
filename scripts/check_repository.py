@@ -31,7 +31,7 @@ def git(*args: str) -> bytes:
 
 def hazards(data: bytes) -> list[str]:
     found = [name for name, pattern in PATTERNS.items() if pattern.search(data)]
-    public_email = lambda value: value.endswith(b"@users.noreply.github.com") or value == b"noreply@anthropic.com"
+    public_email = lambda value: value.endswith(b"@users.noreply.github.com") or value in {b"noreply@github.com", b"noreply@anthropic.com"}
     if any(not public_email(match) for match in EMAIL.findall(data)):
         found.append("non-noreply email (review required)")
     return found
