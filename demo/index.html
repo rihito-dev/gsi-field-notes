@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>gsi-field-notes demo</title>
+  <title>gsi-field-notes — 地理院タイルのデモ</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@6.11.2/dist/maplibre-gl.css">
   <script src="https://cdn.jsdelivr.net/npm/pmtiles@4.5.0/dist/pmtiles.js"></script>
   <style>
@@ -13,26 +13,30 @@
       position: absolute; top: 12px; left: 12px; z-index: 1;
       padding: 8px 12px; border-radius: 8px;
       background: rgba(255,255,255,0.92); color: #111;
+      max-width: calc(100% - 88px);
     }
-    .panel label { margin-right: 8px; }
+    .panel label { display: inline-block; margin-right: 8px; }
     .panel output { font-variant-numeric: tabular-nums; }
+    .panel p { margin: 4px 0 0; font-size: 12px; }
+    .panel a { color: #1555a2; }
   </style>
 </head>
 <body>
   <div class="panel">
-    <label>preset
+    <label>配色
       <select id="preset">
         <option value="dark">dark</option>
         <option value="light">light</option>
       </select>
     </label>
-    <label>DEM
+    <label>標高
       <select id="dem">
         <option value="fixed">fixed(推奨: 正しく復号)</option>
         <option value="linear">linear(比較用: 誤読を再現)</option>
       </select>
     </label>
     z <output id="zoom">-</output>
+    <p><a href="https://github.com/rihito-dev/gsi-field-notes">観測ノート・使い方</a> · 欠測は描画用に0 mで補完</p>
   </div>
   <div id="map"></div>
 
