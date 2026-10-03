@@ -80,5 +80,17 @@ HTTP 404 は海上に限らず欠測でも起き得るため、0 m の補完は�
 
 - 湖面に無効値が入っている湖が他にあるか。あれば、湖岸に 0 m への段差が出る
 - 無効値を 0 m にすることが、海以外の無効値(データの欠け)でも妥当か
-- 変換の処理時間。タイル1枚ごとに PNG を作り直している
+- 変換の処理時間。タイル1枚ごとに画素を読み直している
 - 既存の実装 [maplibre-gl-gsi-terrain](https://github.com/mug-jp/maplibre-gl-gsi-terrain) との違い
+
+## Safariでの画素ノイズへの対処（2026-10-03）
+
+公開デモのfixedモードで、札幌付近 `#10.87/43.0729/141.2982` に細かい点状の陰影が出ることをSafariで再現した。Chromeでの確認だけでは見つからなかった。
+
+[WebKitの説明](https://webkit.org/blog/15697/private-browsing-2-0/)によると、高度な追跡防止はCanvasの画素読み戻し・書き出しに小さなノイズを加える。RGBが標高を表すとき、Rの1段階の差は地理院形式で655.36 m、Terrariumで256 mになるため、見た目には小さい画素の変更でも陰影は壊れる。
+
+プロトコルは `VideoFrame.copyTo` で元の画素を読み、BGRAの場合はR/Bの順を戻すよう変更した。変換後は `ImageData` から作った `ImageBitmap` をMapLibre 6.11.2へ直接返す。`getImageData` と `convertToBlob` を避け、MapLibre自身の追跡防止対策を経由させる。[MapLibreの対応経路](https://github.com/maplibre/maplibre-gl-js/blob/v6.11.2/src/util/util.ts)も参照。
+
+Safariの同じ視点で、修正後に点状ノイズが消え、地形の陰影が表示されることを確認した。ブラウザの保護設定は変更していない。
+
+`VideoFrame` がないブラウザではCanvasへフォールバックする。その経路を使い、Canvasの値を改変する保護設定も有効な環境については、正確性を保証していない。ブラウザの保護設定を変更することは修正の前提にしない。

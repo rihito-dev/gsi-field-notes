@@ -62,6 +62,40 @@ export function convertPixels(data, nodataHeight = 0) {
 }
 
 /**
+ * RGB は色ではなく数値。Safari の追跡防止で getImageData にノイズが入るため、
+ * VideoFrame があれば Canvas を経由せず画素を読む。BGRA の環境では R/B を戻す。
+ */
+export async function readBitmapPixels(bitmap) {
+  if (bitmap.width !== TILE_SIZE || bitmap.height !== TILE_SIZE) {
+    throw new Error(`dem_png: expected ${TILE_SIZE} × ${TILE_SIZE} pixels`);
+  }
+  if (typeof VideoFrame !== "undefined") {
+    const frame = new VideoFrame(bitmap, { timestamp: 0 });
+    try {
+      const format = frame.format;
+      if (!format || !/^(RGBA|RGBX|BGRA|BGRX)$/.test(format)) {
+        throw new Error(`dem_png: unsupported VideoFrame format ${format}`);
+      }
+      const data = new Uint8ClampedArray(TILE_SIZE * TILE_SIZE * 4);
+      await frame.copyTo(data, { layout: [{ offset: 0, stride: TILE_SIZE * 4 }] });
+      if (format.startsWith("BGR")) {
+        for (let i = 0; i < data.length; i += 4) {
+          [data[i], data[i + 2]] = [data[i + 2], data[i]];
+        }
+      }
+      return data;
+    } finally {
+      frame.close();
+    }
+  }
+  // VideoFrame のないブラウザ向け。Canvas を改変する保護設定では正確性を保証しない。
+  const canvas = new OffscreenCanvas(TILE_SIZE, TILE_SIZE);
+  const ctx = canvas.getContext("2d", { willReadFrequently: true });
+  ctx.drawImage(bitmap, 0, 0);
+  return ctx.getImageData(0, 0, TILE_SIZE, TILE_SIZE).data;
+}
+
+/**
  * addProtocol に渡すハンドラを作る。タイルの URL は `gsidem://{z}/{x}/{y}`。
  *
  * 陸地を含まない沖合のタイルは地理院側が 404 を返す。その場合は全画素 nodataHeight の
@@ -73,13 +107,11 @@ export function createGsiDemProtocol({ nodataHeight = 0, url = GSI_DEM_URL } = {
     const res = await fetch(url.replace("{z}", z).replace("{x}", x).replace("{y}", y), {
       signal: abortController.signal,
     });
-    const canvas = new OffscreenCanvas(TILE_SIZE, TILE_SIZE);
-    const ctx = canvas.getContext("2d", { willReadFrequently: true });
-    let image;
+    let data;
     if (res.status === 404) {
       // 全画素を地理院の無効値 (128, 0, 0) にし、下の convertPixels に置き換えを任せる。
-      image = ctx.createImageData(TILE_SIZE, TILE_SIZE);
-      for (let i = 0; i < image.data.length; i += 4) image.data.set([128, 0, 0, 255], i);
+      data = new Uint8ClampedArray(TILE_SIZE * TILE_SIZE * 4);
+      for (let i = 0; i < data.length; i += 4) data.set([128, 0, 0, 255], i);
     } else if (!res.ok) {
       throw new Error(`dem_png ${z}/${x}/${y}: HTTP ${res.status}`);
     } else {
@@ -88,14 +120,24 @@ export function createGsiDemProtocol({ nodataHeight = 0, url = GSI_DEM_URL } = {
         premultiplyAlpha: "none",
         colorSpaceConversion: "none",
       });
-      ctx.drawImage(bitmap, 0, 0);
-      bitmap.close();
-      image = ctx.getImageData(0, 0, TILE_SIZE, TILE_SIZE);
+      try {
+        data = await readBitmapPixels(bitmap);
+      } finally {
+        bitmap.close();
+      }
     }
-    convertPixels(image.data, nodataHeight);
-    ctx.putImageData(image, 0, 0);
-    const blob = await canvas.convertToBlob({ type: "image/png" });
-    return { data: await blob.arrayBuffer() };
+    convertPixels(data, nodataHeight);
+    // convertToBlob も Safari のノイズ対象。MapLibre 6.11.2 の ImageBitmap 応答を使い、
+    // PNG への再書き出しを避ける。MapLibre 側も保護下では VideoFrame で画素を読む。
+    const bitmap = await createImageBitmap(new ImageData(data, TILE_SIZE, TILE_SIZE), {
+      premultiplyAlpha: "none",
+      colorSpaceConversion: "none",
+    });
+    if (abortController.signal.aborted) {
+      bitmap.close();
+      abortController.signal.throwIfAborted();
+    }
+    return { data: bitmap };
   };
 }
 
