@@ -42,7 +42,7 @@
 
   <script type="module">
     import { Map, NavigationControl, addProtocol } from "https://cdn.jsdelivr.net/npm/maplibre-gl@6.11.2/dist/maplibre-gl.mjs";
-    import { SCHEME, createGsiDemProtocol, withFixedDem } from "../src/gsi-dem-protocol.js";
+    import { SCHEME, createGsiDemProtocol, withFixedDem } from "../src/gsi-dem-protocol.js?v=2";
 
     const protocol = new pmtiles.Protocol();
     addProtocol("pmtiles", protocol.tile);

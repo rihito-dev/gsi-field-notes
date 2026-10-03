@@ -57,7 +57,9 @@
 </script>
 ```
 
-復号には `OffscreenCanvas` と `createImageBitmap` が使えるブラウザが必要です。無効値と HTTP 404 を 0 m へ置き換えるのは陰影表示用の補完で、実測値ではありません。測量や標高の分析には使わず、詳しい限界は [標高のノート](notes/dem-png-decoding.md) を参照してください。
+復号には `createImageBitmap` が使えるブラウザと MapLibre GL JS 6.11.2 が必要です。`VideoFrame` があればCanvasを経由せず読み取ります。Safariの追跡防止が画素に加えるノイズを避けるため、返却もPNGへの再書き出しをせず `ImageBitmap` を渡します。`VideoFrame` のないブラウザでは `OffscreenCanvas` を使い、Canvasの値を改変する保護設定下の正確性は未保証です。
+
+無効値と HTTP 404 を 0 m へ置き換えるのは陰影表示用の補完で、実測値ではありません。測量や標高の分析には使わず、詳しい限界は [標高のノート](notes/dem-png-decoding.md) を参照してください。
 
 ### デモ
 
