@@ -27,6 +27,8 @@ jobs:
         run: python3 scripts/check_repository.py
       - name: DEM protocol tests
         run: npm test
+      - name: Offline observation review tests
+        run: python3 -m unittest discover -s tests -p 'test_*.py' -v
       - name: Build the static demo for GitHub Pages
         run: python3 scripts/build_pages.py
       - name: Configure GitHub Pages

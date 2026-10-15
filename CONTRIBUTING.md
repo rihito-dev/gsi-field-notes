@@ -6,6 +6,7 @@ Python 3.12 以上と Node.js 22 以上を推奨します。色は `presets/` �
 python3 scripts/build_styles.py --check
 python3 scripts/check_repository.py
 npm test
+python3 -m unittest discover -s tests -p 'test_*.py' -v
 npx --yes -p @maplibre/maplibre-gl-style-spec@26.4.4 gl-style-validate styles/*.json
 ```
 
@@ -41,5 +42,7 @@ python3 -m http.server 8765 --bind 127.0.0.1 --directory work/pages-preview
 ## 観測の更新
 
 README の手順で `--out work/observations/<run-name>` に書き、既存の観測を上書きせず比較します。地点・ズーム・日時・入力の版とハッシュ・欠測を確認し、更新するときは CSV とメタデータ、ノートを同じ変更に含めます。全国や未観測の縮尺へ結果を広げないでください。
+
+比較には `scripts/review_observations.py --before data/observations --after work/observations/<run-name> --out work/reviews/<run-name>` を使えます。行に差がある場合やメタデータの内容が変わった場合は終了コード1、入力不備や検算不一致は2です。比較後は `--verify work/reviews/<run-name>` で保存した入力から再検算します。詳しくは[観測更新のレビュー](notes/reviewing-observation-updates.md)を参照してください。
 
 出典・加工表示を維持し、取得したタイル・仕様書本体、実メールアドレス、秘密情報をコミットしないでください。新しいデータソースを加える場合は、その提供元の利用条件も確認します。
