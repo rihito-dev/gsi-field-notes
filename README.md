@@ -112,6 +112,21 @@ python scripts/compare_with_spec.py \
 
 地理院のサーバへは 1 秒以上の間隔を空けて順番に要求します(2026-09-25 の実行ではベクトルタイルで 66 件、標高タイルで 24 件)。取得したタイルは集計にだけ使い、リポジトリには保存しません。観測日時は `*.meta.json` に残ります。掲載済みのベクトルタイルには Last-Modified / ETag、仕様書には Last-Modified があります。掲載済みの標高タイルには画素の集計と日時のみがあり、取得時の版・ハッシュは未記録です。今後の実行では標高タイルごとの版と SHA-256、仕様書と観測 CSV の SHA-256 も記録します。タイルは更新されるので、同じ結果になるとは限りません。
 
+### 新旧の観測を比較する
+
+二つの完了済み観測フォルダを、通信なしで比較できます。比較対象は `vector_tiles.csv`・`dem_png.csv` と、それぞれの `*.meta.json` です。Python標準ライブラリだけで動きます。
+
+```sh
+python3 scripts/review_observations.py \
+  --before data/observations --after work/observations/new-run \
+  --out work/reviews/new-run
+python3 scripts/review_observations.py --verify work/reviews/new-run
+```
+
+`review.md` に追加・削除・変更と件数列の増減、`review.json` に全件明細・比較条件・入力ハッシュを残します。比較に使ったCSVとメタデータは `inputs/` にそのままコピーするため、元のフォルダがなくなっても再検算できます。出力先は新規フォルダに限り、既存の観測やレビューを上書きしません。
+
+差分は別の行の対応付けで全件照合し、件数列の合計を「追加 − 削除 ＋ 変更分」と突き合わせます。地点・ズーム・欠測など記録された条件の違いも分けて表示します。これは保存した入力と計算結果の確認であり、タイルの真正性や全国の変化を証明するものではありません。[比較条件・終了コード・制限](notes/reviewing-observation-updates.md)も確認してください。
+
 ## 検証と更新
 
 Python 3.12 以上・Node.js 22 以上を推奨します。ネットワーク不要の検証は以下です。
@@ -120,6 +135,7 @@ Python 3.12 以上・Node.js 22 以上を推奨します。ネットワーク不
 python3 scripts/build_styles.py --check
 python3 scripts/check_repository.py
 npm test
+python3 -m unittest discover -s tests -p 'test_*.py' -v
 ```
 
 CI では加えて固定版の MapLibre style spec で検証します。ブラウザでの撮影・外部タイル遮断試験の手順は [CONTRIBUTING.md](CONTRIBUTING.md) にあります。
@@ -139,6 +155,7 @@ scripts/
   observe_vector_tiles.py  ベクトルタイルのレイヤと vt_code を数える
   observe_dem_png.py       標高タイルの画素を2通りに復号して比べる
   compare_with_spec.py     観測した vt_code を地理院の仕様書と突き合わせる
+  review_observations.py   新旧の観測CSVを比較・検算し、入力コピーと証跡を残す
   capture_comparisons.mjs  デモを headless Chrome で撮影し docs/images/ に書く
   check_offline.mjs        地理院のホストを遮断してデモを開き、描画を確かめる
   _cdp.mjs                 上の2本が使う headless Chrome の操作(依存なし)
